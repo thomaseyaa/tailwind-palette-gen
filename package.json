@@ -1,0 +1,23 @@
+{
+  "name": "tailwind-palette-gen",
+  "version": "1.0.0",
+  "description": "Generate a full Tailwind CSS color palette (50-950) from a single base color",
+  "main": "dist/index.js",
+  "bin": {
+    "tailwind-palette-gen": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --config jest.config.js"
+  },
+  "keywords": ["tailwindcss", "palette", "color", "generator", "design-system"],
+  "author": "Thomas Eyaa",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  }
+}
