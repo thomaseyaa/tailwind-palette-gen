@@ -25,6 +25,21 @@ describe("generatePalette", () => {
     expect(toLightness(palette["50"])).toBeGreaterThan(toLightness(palette["950"]));
   });
 
+  it("shades are monotonically darker from 50 to 950", () => {
+    const palette = generatePalette("#3b82f6");
+    const toLightness = (hex: string) => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return r + g + b;
+    };
+    const shades = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"];
+    const values = shades.map((s) => toLightness(palette[s]));
+    for (let i = 1; i < values.length; i++) {
+      expect(values[i]).toBeLessThan(values[i - 1]);
+    }
+  });
+
   it("handles short hex", () => {
     const palette = generatePalette("#f00");
     expect(Object.keys(palette)).toHaveLength(11);
