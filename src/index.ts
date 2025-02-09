@@ -23,6 +23,23 @@ const LIGHTNESS_STOPS: Record<number, number> = {
   950: 0.18,
 };
 
+// Chroma multipliers applied to the base color's chroma per shade. Ends are
+// tapered because very light / very dark colors can't sustain high chroma
+// inside sRGB — keeping the multiplier at 1 would produce visible banding.
+const CHROMA_MULTIPLIERS: Record<number, number> = {
+  50: 0.25,
+  100: 0.4,
+  200: 0.6,
+  300: 0.8,
+  400: 0.95,
+  500: 1,
+  600: 1,
+  700: 0.95,
+  800: 0.85,
+  900: 0.7,
+  950: 0.55,
+};
+
 export function generatePalette(hex: string): Palette {
   const clean = hex.replace("#", "");
   if (!/^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(clean)) {
@@ -34,7 +51,8 @@ export function generatePalette(hex: string): Palette {
 
   for (const shade of SHADES) {
     const l = LIGHTNESS_STOPS[shade];
-    palette[String(shade)] = oklchToHex({ l, c, h });
+    const cShade = c * CHROMA_MULTIPLIERS[shade];
+    palette[String(shade)] = oklchToHex({ l, c: cShade, h });
   }
 
   return palette;
