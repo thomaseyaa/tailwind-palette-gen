@@ -1,4 +1,4 @@
-import { hexToOklch, oklchToHex } from "./oklch";
+import { hexToOklch, isAchromatic, oklchToHex } from "./oklch";
 
 export interface Palette {
   [shade: string]: string;
@@ -46,13 +46,18 @@ export function generatePalette(hex: string): Palette {
     throw new Error(`Invalid hex color: ${hex}`);
   }
 
-  const { c, h } = hexToOklch(hex);
+  const base = hexToOklch(hex);
   const palette: Palette = {};
+
+  // For achromatic bases (true greys), force chroma to 0 across all shades
+  // so the generated palette stays neutral instead of drifting toward an
+  // arbitrary hue once we apply the chroma multiplier curve.
+  const baseChroma = isAchromatic(base) ? 0 : base.c;
 
   for (const shade of SHADES) {
     const l = LIGHTNESS_STOPS[shade];
-    const cShade = c * CHROMA_MULTIPLIERS[shade];
-    palette[String(shade)] = oklchToHex({ l, c: cShade, h });
+    const c = baseChroma * CHROMA_MULTIPLIERS[shade];
+    palette[String(shade)] = oklchToHex({ l, c, h: base.h });
   }
 
   return palette;

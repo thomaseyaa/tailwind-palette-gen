@@ -23,11 +23,19 @@ export function hexToOklch(hex: string): OklchColor {
     throw new Error(`Invalid color: ${hex}`);
   }
   const o = toOklch(parsed);
+  // Achromatic colors (greys, near-greys) produce NaN for hue. We keep the
+  // hue at 0 — the chroma will also be ~0 so the hue choice doesn't matter
+  // visually, but downstream code (e.g. CSS `oklch()` serialisation) can't
+  // accept NaN.
   return {
     l: o?.l ?? 0,
     c: o?.c ?? 0,
     h: Number.isFinite(o?.h) ? (o!.h as number) : 0,
   };
+}
+
+export function isAchromatic(color: OklchColor, threshold = 0.005): boolean {
+  return color.c < threshold;
 }
 
 /**
