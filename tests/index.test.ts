@@ -48,6 +48,18 @@ describe("generatePalette", () => {
   it("throws on invalid hex", () => {
     expect(() => generatePalette("xyz")).toThrow("Invalid hex color");
   });
+
+  it("keeps a grey base neutral (no hue drift)", () => {
+    const palette = generatePalette("#808080");
+    for (const hex of Object.values(palette)) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      // Allow ±2 channels of drift due to sRGB rounding.
+      expect(Math.abs(r - g)).toBeLessThanOrEqual(2);
+      expect(Math.abs(g - b)).toBeLessThanOrEqual(2);
+    }
+  });
 });
 
 describe("formatAsTailwindConfig", () => {
