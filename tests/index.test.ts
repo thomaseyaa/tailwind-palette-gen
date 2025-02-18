@@ -1,4 +1,4 @@
-import { generatePalette, formatAsTailwindConfig } from "../src/index";
+import { generatePalette, generatePaletteOklch, formatAsTailwindConfig } from "../src/index";
 
 describe("generatePalette", () => {
   it("generates all 11 shades", () => {
@@ -58,6 +58,29 @@ describe("generatePalette", () => {
       // Allow ±2 channels of drift due to sRGB rounding.
       expect(Math.abs(r - g)).toBeLessThanOrEqual(2);
       expect(Math.abs(g - b)).toBeLessThanOrEqual(2);
+    }
+  });
+});
+
+describe("generatePaletteOklch", () => {
+  it("returns OKLCH coordinates for every shade", () => {
+    const palette = generatePaletteOklch("#3b82f6");
+    const shades = Object.keys(palette);
+    expect(shades).toHaveLength(11);
+    for (const c of Object.values(palette)) {
+      expect(c.l).toBeGreaterThan(0);
+      expect(c.l).toBeLessThanOrEqual(1);
+      expect(c.c).toBeGreaterThanOrEqual(0);
+      expect(typeof c.h).toBe("number");
+    }
+  });
+
+  it("keeps hue stable across shades", () => {
+    const palette = generatePaletteOklch("#3b82f6");
+    const hues = Object.values(palette).map((c) => c.h);
+    const first = hues[0];
+    for (const h of hues) {
+      expect(h).toBeCloseTo(first, 5);
     }
   });
 });
