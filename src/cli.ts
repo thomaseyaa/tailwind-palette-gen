@@ -4,6 +4,13 @@ import { generatePalette, formatAsTailwindConfig } from "./index";
 
 const args = process.argv.slice(2);
 
+if (args.includes("--version") || args.includes("-v")) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { version } = require("../package.json");
+  console.log(version);
+  process.exit(0);
+}
+
 if (args.length < 1 || args.includes("--help") || args.includes("-h")) {
   console.log(`
   tailwind-palette-gen - Generate a Tailwind palette from a base color
@@ -14,6 +21,8 @@ if (args.length < 1 || args.includes("--help") || args.includes("-h")) {
   Options:
     --name <name>  Name for the color (default: "primary")
     --config       Output as Tailwind config
+    --version, -v  Print version
+    --help, -h     Show this help
 
   Examples:
     tailwind-palette-gen "#3b82f6"
