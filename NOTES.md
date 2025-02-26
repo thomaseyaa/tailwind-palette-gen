@@ -1,31 +1,28 @@
 # Notes
 
-## OKLCH migration (Feb 2025)
+## OKLCH migration (Feb 2025) — done
 
-The current HSL-based palette generation has known issues:
+Done in commits between 2025-02-04 and 2025-02-25:
 
-- Shades are not perceptually uniform: 500 -> 600 looks much darker than
-  600 -> 700 even though the lightness delta is similar.
-- Hue rotation in HSL is uneven across the spectrum (yellows feel washed
-  out around 50-100, blues feel too dark around 800-950).
-- No way to tell that a generated palette is "good" without eyeballing it.
+- Added `culori` and a small wrapper (`src/oklch.ts`) for hex <-> OKLCH.
+- Switched `generatePalette` to drive shades from a calibrated lightness
+  curve, then taper chroma at the ends.
+- Achromatic bases (true greys) bypass the chroma curve entirely.
+- Snapshot fixtures pin known palettes (blue, slate, green, red) so any
+  curve regression is caught.
+- New `generatePaletteOklch(hex)` returns raw OKLCH coordinates for code
+  that wants to emit `oklch()` CSS or design tokens.
 
-OKLCH (CSS Color 4, supported in all modern browsers since 2023) fixes
-the perceptual uniformity issue and matches what Tailwind v4 ships with.
+## Next — multi-format output (Mar 2025)
 
-### Plan
+The current CLI only outputs a flat list or a Tailwind v3 config object.
+Targets for next month:
 
-1. Add `culori` for color conversion (HEX -> OKLCH -> HEX).
-2. Replace the lightness map with an OKLCH L curve calibrated against
-   Tailwind's own palettes (so 500 -> base color, 50/950 -> bookends).
-3. Keep chroma roughly constant around the base, taper towards the ends.
-4. Keep the public API stable (`generatePalette(hex)` still returns the
-   same shape) so existing callers don't break.
-5. Snapshot tests against a small set of base colors to catch regressions.
+1. CSS custom properties block (`--brand-500: oklch(...)`) — keeps OKLCH
+   in the output, falls back to hex via a second declaration.
+2. DTCG JSON token file — each shade as `{ "$value": "...", "$type":
+   "color" }`. The spec is finally stable enough.
+3. Tailwind v4 `@theme` block — Tailwind v4 (Jan 2025) ships its CSS-first
+   config; we should emit something that works there too.
 
-### Reference palettes
-
-- Tailwind v4 (jan 2025) uses OKLCH internally and exposes both `oklch()`
-  and hex values per shade.
-- We target similar L stops: roughly 97 / 92 / 84 / 75 / 65 / 55 / 47 /
-  40 / 33 / 25 / 15.
+CLI surface: `--format tailwind|css|dtcg|tailwind-v4`, default `tailwind`.
