@@ -48,10 +48,8 @@ export function generatePalette(hex: string): Palette {
   return palette;
 }
 
-export function formatAsTailwindConfig(palette: Palette, name: string): string {
-  const entries = Object.entries(palette)
-    .map(([shade, color]) => `        ${shade}: "${color}",`)
-    .join("\n");
+import { tailwindFormatter } from "./formatters/tailwind";
 
-  return `module.exports = {\n  theme: {\n    extend: {\n      colors: {\n        ${name}: {\n${entries}\n        },\n      },\n    },\n  },\n};`;
+export function formatAsTailwindConfig(palette: Palette, name: string): string {
+  return tailwindFormatter({ name, palette });
 }
