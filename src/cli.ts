@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { generatePalette, generatePaletteOklch } from "./index";
 import {
   format as runFormatter,
@@ -28,6 +30,7 @@ if (args.length < 1 || args.includes("--help") || args.includes("-h")) {
     --format <fmt>    Output format: ${OUTPUT_FORMATS.join(" | ")}
                       (default: pretty table; passing --config is a
                       shortcut for --format tailwind)
+    --out <path>      Write formatted output to a file
     --config          Alias for --format tailwind
     --version, -v     Print version
     --help, -h        Show this help
@@ -80,7 +83,14 @@ try {
     console.log();
   } else {
     const oklch = generatePaletteOklch(hex);
-    console.log(runFormatter({ name, palette, oklch }, format));
+    const out = runFormatter({ name, palette, oklch }, format);
+    const outPath = pickFlag("--out");
+    if (outPath) {
+      writeFileSync(resolve(process.cwd(), outPath), out + "\n", "utf8");
+      console.error(`  Wrote ${out.split("\n").length} lines to ${outPath}`);
+    } else {
+      console.log(out);
+    }
   }
 } catch (err: unknown) {
   const msg = err instanceof Error ? err.message : String(err);
