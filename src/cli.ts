@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
-import { generatePalette, formatAsTailwindConfig } from "./index";
+import { generatePalette, generatePaletteOklch } from "./index";
+import {
+  format as runFormatter,
+  OUTPUT_FORMATS,
+  OutputFormat,
+} from "./formatters/index";
 
 const args = process.argv.slice(2);
 
@@ -16,40 +21,69 @@ if (args.length < 1 || args.includes("--help") || args.includes("-h")) {
   tailwind-palette-gen - Generate a Tailwind palette from a base color
 
   Usage:
-    tailwind-palette-gen <hex-color> [--name <name>] [--config]
+    tailwind-palette-gen <hex-color> [options]
 
   Options:
-    --name <name>  Name for the color (default: "primary")
-    --config       Output as Tailwind config
-    --version, -v  Print version
-    --help, -h     Show this help
+    --name <name>     Name for the color (default: "primary")
+    --format <fmt>    Output format: ${OUTPUT_FORMATS.join(" | ")}
+                      (default: pretty table; passing --config is a
+                      shortcut for --format tailwind)
+    --config          Alias for --format tailwind
+    --version, -v     Print version
+    --help, -h        Show this help
 
   Examples:
     tailwind-palette-gen "#3b82f6"
-    tailwind-palette-gen "#3b82f6" --name blue
-    tailwind-palette-gen "#3b82f6" --name brand --config
+    tailwind-palette-gen "#3b82f6" --name brand --format tailwind-v4
+    tailwind-palette-gen "#3b82f6" --name brand --format dtcg > brand.tokens.json
+    tailwind-palette-gen "#3b82f6" --name brand --format css
   `);
   process.exit(args.includes("--help") || args.includes("-h") ? 0 : 1);
 }
 
 const hex = args[0];
-const nameIdx = args.indexOf("--name");
-const name = nameIdx !== -1 && args[nameIdx + 1] ? args[nameIdx + 1] : "primary";
-const asConfig = args.includes("--config");
+
+function pickFlag(name: string): string | undefined {
+  const idx = args.indexOf(name);
+  if (idx === -1) return undefined;
+  const next = args[idx + 1];
+  if (!next || next.startsWith("-")) return undefined;
+  return next;
+}
+
+const name = pickFlag("--name") ?? "primary";
+
+let format: OutputFormat | "pretty";
+const formatFlag = pickFlag("--format");
+if (formatFlag) {
+  if (!(OUTPUT_FORMATS as string[]).includes(formatFlag)) {
+    console.error(
+      `  Error: Unknown format "${formatFlag}". Valid: ${OUTPUT_FORMATS.join(", ")}`
+    );
+    process.exit(1);
+  }
+  format = formatFlag as OutputFormat;
+} else if (args.includes("--config")) {
+  format = "tailwind";
+} else {
+  format = "pretty";
+}
 
 try {
   const palette = generatePalette(hex);
 
-  if (asConfig) {
-    console.log(formatAsTailwindConfig(palette, name));
-  } else {
+  if (format === "pretty") {
     console.log(`\n  Palette for ${hex} (${name}):\n`);
     for (const [shade, color] of Object.entries(palette)) {
       console.log(`  ${shade.padStart(4)}  ${color}`);
     }
     console.log();
+  } else {
+    const oklch = generatePaletteOklch(hex);
+    console.log(runFormatter({ name, palette, oklch }, format));
   }
-} catch (err: any) {
-  console.error(`  Error: ${err.message}`);
+} catch (err: unknown) {
+  const msg = err instanceof Error ? err.message : String(err);
+  console.error(`  Error: ${msg}`);
   process.exit(1);
 }
