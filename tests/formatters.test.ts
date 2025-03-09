@@ -33,6 +33,7 @@ describe("formatters", () => {
       $type: "color",
       $value: palette["500"],
     });
+    expect(parsed.brand.$description).toMatch(/brand color scale/);
   });
 
   it("unknown format throws", () => {
