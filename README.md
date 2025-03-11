@@ -36,8 +36,14 @@ npx tailwind-palette-gen "#3b82f6"
 # Custom name
 npx tailwind-palette-gen "#3b82f6" --name brand
 
-# Output as Tailwind config
-npx tailwind-palette-gen "#3b82f6" --name brand --config
+# Output formats
+npx tailwind-palette-gen "#3b82f6" --name brand --format tailwind        # v3 config
+npx tailwind-palette-gen "#3b82f6" --name brand --format tailwind-v4     # @theme block
+npx tailwind-palette-gen "#3b82f6" --name brand --format css             # :root vars
+npx tailwind-palette-gen "#3b82f6" --name brand --format dtcg            # DTCG JSON
+
+# Write to a file
+npx tailwind-palette-gen "#3b82f6" --name brand --format dtcg --out brand.tokens.json
 ```
 
 ## Programmatic API
