@@ -26,6 +26,12 @@ describe("formatters", () => {
     expect(out).toContain("--brand-500");
   });
 
+  it("css output falls back to hex when oklch is omitted", () => {
+    const out = format({ name: "brand", palette }, "css");
+    expect(out).toContain("--brand-500: " + palette["500"]);
+    expect(out).not.toContain("oklch(");
+  });
+
   it("dtcg output is valid JSON with $value and $type", () => {
     const out = format({ name: "brand", palette }, "dtcg");
     const parsed = JSON.parse(out);
