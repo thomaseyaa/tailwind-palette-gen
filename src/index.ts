@@ -1,4 +1,5 @@
 import { CHROMA_MULTIPLIERS, LIGHTNESS_STOPS, SHADES } from "./curves";
+import { tailwindFormatter } from "./formatters/tailwind";
 import { hexToOklch, isAchromatic, OklchColor, oklchToHex } from "./oklch";
 
 export interface Palette {
@@ -47,8 +48,6 @@ export function generatePalette(hex: string): Palette {
   }
   return palette;
 }
-
-import { tailwindFormatter } from "./formatters/tailwind";
 
 export function formatAsTailwindConfig(palette: Palette, name: string): string {
   return tailwindFormatter({ name, palette });
