@@ -1,7 +1,7 @@
 {
   "name": "tailwind-palette-gen",
-  "version": "0.2.0",
-  "description": "Generate a full Tailwind CSS color palette (50-950) from a single base color",
+  "version": "0.3.0",
+  "description": "Generate a full Tailwind CSS color palette (50-950) from a single base color, using OKLCH for perceptual uniformity",
   "main": "dist/index.js",
   "bin": {
     "tailwind-palette-gen": "dist/cli.js"
