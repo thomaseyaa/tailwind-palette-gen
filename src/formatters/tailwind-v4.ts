@@ -19,7 +19,7 @@ export const tailwindV4Formatter: Formatter = ({ name, palette, oklch }) => {
       const { l, c, h } = oklch[shade];
       const ls = (l * 100).toFixed(2);
       const cs = c.toFixed(4);
-      const hs = h.toFixed(2);
+      const hs = c < 0.0005 ? "none" : h.toFixed(2);
       lines.push(`  --color-${name}-${shade}: oklch(${ls}% ${cs} ${hs});`);
     } else {
       lines.push(`  --color-${name}-${shade}: ${hex};`);

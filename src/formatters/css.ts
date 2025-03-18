@@ -19,7 +19,9 @@ export const cssFormatter: Formatter = ({ name, palette, oklch }) => {
       const { l, c, h } = oklch[shade];
       const ls = (l * 100).toFixed(2);
       const cs = c.toFixed(4);
-      const hs = h.toFixed(2);
+      // Achromatic colors keep h at 0 internally — emit `none` so the
+      // browser doesn't render a hue that wasn't really in the source.
+      const hs = c < 0.0005 ? "none" : h.toFixed(2);
       lines.push(`  --${name}-${shade}: oklch(${ls}% ${cs} ${hs}); /* ${hex} */`);
     } else {
       lines.push(`  --${name}-${shade}: ${hex};`);
