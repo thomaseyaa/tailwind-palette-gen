@@ -76,9 +76,19 @@ try {
   const palette = generatePalette(hex);
 
   if (format === "pretty") {
+    const showOklch = args.includes("--show-oklch");
+    const oklch = showOklch ? generatePaletteOklch(hex) : undefined;
     console.log(`\n  Palette for ${hex} (${name}):\n`);
     for (const [shade, color] of Object.entries(palette)) {
-      console.log(`  ${shade.padStart(4)}  ${color}`);
+      if (showOklch && oklch) {
+        const o = oklch[shade];
+        const ls = (o.l * 100).toFixed(1).padStart(5);
+        const cs = o.c.toFixed(3);
+        const hs = o.h.toFixed(1).padStart(5);
+        console.log(`  ${shade.padStart(4)}  ${color}  oklch(${ls}% ${cs} ${hs})`);
+      } else {
+        console.log(`  ${shade.padStart(4)}  ${color}`);
+      }
     }
     console.log();
   } else {
