@@ -58,6 +58,26 @@ const config = formatAsTailwindConfig(palette, "brand");
 // module.exports = { theme: { extend: { colors: { brand: { ... } } } } }
 ```
 
+## Tailwind v4
+
+When you target Tailwind v4 (which itself moved to a CSS-first config in
+January 2025), use `--format tailwind-v4` and drop the result into a CSS
+file imported with `@import "tailwindcss"`:
+
+```css
+@import "tailwindcss";
+
+/* ... output of tailwind-palette-gen ... */
+@theme {
+  --color-brand-50: oklch(97.00% 0.0247 264.05);
+  /* ... */
+  --color-brand-950: oklch(18.00% 0.0561 264.05);
+}
+```
+
+Tailwind v4 will then expose `bg-brand-500`, `text-brand-700`, etc. without
+any extra configuration.
+
 ## Why OKLCH?
 
 `hsl()` is not perceptually uniform: dropping the L coordinate from 60% to
