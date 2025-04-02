@@ -20,3 +20,41 @@ export function lightnessDelta(a: OklchColor, b: OklchColor): number {
  * swatches" — which is exactly what we want to flag.
  */
 export const ADJACENT_PAIR_MIN_DELTA = 0.05;
+
+export interface ContrastIssue {
+  kind: "adjacent-too-close";
+  from: string;
+  to: string;
+  delta: number;
+  threshold: number;
+}
+
+import type { OklchPalette } from "./index";
+
+/**
+ * Walk the palette in shade order and flag adjacent pairs whose OKLCH
+ * lightness delta is below the threshold. The result is empty for a
+ * well-formed palette built from the default curves.
+ */
+export function findContrastIssues(
+  palette: OklchPalette,
+  threshold = ADJACENT_PAIR_MIN_DELTA,
+): ContrastIssue[] {
+  const shades = Object.keys(palette);
+  const issues: ContrastIssue[] = [];
+  for (let i = 0; i < shades.length - 1; i++) {
+    const a = palette[shades[i]];
+    const b = palette[shades[i + 1]];
+    const delta = lightnessDelta(a, b);
+    if (delta < threshold) {
+      issues.push({
+        kind: "adjacent-too-close",
+        from: shades[i],
+        to: shades[i + 1],
+        delta,
+        threshold,
+      });
+    }
+  }
+  return issues;
+}
