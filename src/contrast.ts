@@ -15,11 +15,12 @@ export function lightnessDelta(a: OklchColor, b: OklchColor): number {
 /**
  * Heuristic threshold for an adjacent shade pair (e.g. 400 vs 500).
  *
- * The 11-stop Tailwind curve targets ~0.08 OKLCH-L between adjacent shades.
- * Anything below ~0.05 reads as "I can't tell these apart in a list of
- * swatches" — which is exactly what we want to flag.
+ * The default 11-stop curve has a deliberately flatter 50 -> 100 step
+ * (~0.04 OKLCH-L) because the bookend tints feel less distinct anyway.
+ * Everything below ~0.035 reads as "I can't tell these apart in a list of
+ * swatches" — which is what we want to flag.
  */
-export const ADJACENT_PAIR_MIN_DELTA = 0.05;
+export const ADJACENT_PAIR_MIN_DELTA = 0.035;
 
 export interface ContrastIssue {
   kind: "adjacent-too-close";

@@ -19,9 +19,10 @@ describe("findContrastIssues", () => {
     // Squash 400 and 500 together so the delta drops below threshold.
     palette["500"] = { ...palette["400"] };
     const issues = findContrastIssues(palette);
-    expect(issues).toHaveLength(2); // 400->500 and 500->600
+    expect(issues).toHaveLength(1);
     expect(issues[0].from).toBe("400");
     expect(issues[0].to).toBe("500");
+    expect(issues[0].delta).toBeCloseTo(0);
   });
 
   it("respects a custom threshold", () => {
