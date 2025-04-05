@@ -3,6 +3,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { generatePalette, generatePaletteOklch } from "./index";
+import { findContrastIssues } from "./contrast";
 import {
   format as runFormatter,
   OUTPUT_FORMATS,
@@ -32,6 +33,7 @@ if (args.length < 1 || args.includes("--help") || args.includes("-h")) {
                       shortcut for --format tailwind)
     --out <path>      Write formatted output to a file
     --config          Alias for --format tailwind
+    --check-contrast  Warn (to stderr) about shade pairs that look too close
     --version, -v     Print version
     --help, -h        Show this help
 
@@ -72,8 +74,23 @@ if (formatFlag) {
   format = "pretty";
 }
 
+function maybeWarnOnContrast(hex: string): void {
+  if (!args.includes("--check-contrast")) return;
+  const oklch = generatePaletteOklch(hex);
+  const issues = findContrastIssues(oklch);
+  if (issues.length === 0) return;
+  console.error("  Contrast warnings:");
+  for (const issue of issues) {
+    const delta = issue.delta.toFixed(3);
+    console.error(
+      `    ${issue.from} -> ${issue.to}: OKLCH-L delta ${delta} (threshold ${issue.threshold})`,
+    );
+  }
+}
+
 try {
   const palette = generatePalette(hex);
+  maybeWarnOnContrast(hex);
 
   if (format === "pretty") {
     const showOklch = args.includes("--show-oklch");
