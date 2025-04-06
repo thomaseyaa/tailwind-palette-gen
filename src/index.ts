@@ -1,3 +1,4 @@
+import { findContrastIssues, type ContrastIssue } from "./contrast";
 import { CHROMA_MULTIPLIERS, LIGHTNESS_STOPS, SHADES } from "./curves";
 import { tailwindFormatter } from "./formatters/tailwind";
 import { hexToOklch, isAchromatic, OklchColor, oklchToHex } from "./oklch";
@@ -51,4 +52,27 @@ export function generatePalette(hex: string): Palette {
 
 export function formatAsTailwindConfig(palette: Palette, name: string): string {
   return tailwindFormatter({ name, palette });
+}
+
+export interface PaletteAnalysis {
+  palette: Palette;
+  oklch: OklchPalette;
+  contrastIssues: ContrastIssue[];
+}
+
+/**
+ * One-shot helper that returns the hex palette, the OKLCH palette, and
+ * any contrast issues detected in a single call.
+ */
+export function analyze(hex: string): PaletteAnalysis {
+  const oklch = generatePaletteOklch(hex);
+  const palette: Palette = {};
+  for (const [shade, color] of Object.entries(oklch)) {
+    palette[shade] = oklchToHex(color);
+  }
+  return {
+    palette,
+    oklch,
+    contrastIssues: findContrastIssues(oklch),
+  };
 }
