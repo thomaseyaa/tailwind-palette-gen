@@ -1,4 +1,4 @@
-import { generatePalette, generatePaletteOklch, formatAsTailwindConfig } from "../src/index";
+import { analyze, generatePalette, generatePaletteOklch, formatAsTailwindConfig } from "../src/index";
 
 describe("generatePalette", () => {
   it("generates all 11 shades", () => {
@@ -82,6 +82,20 @@ describe("generatePaletteOklch", () => {
     for (const h of hues) {
       expect(h).toBeCloseTo(first, 5);
     }
+  });
+});
+
+describe("analyze", () => {
+  it("returns palette, oklch and contrastIssues in one call", () => {
+    const result = analyze("#3b82f6");
+    expect(Object.keys(result.palette)).toHaveLength(11);
+    expect(Object.keys(result.oklch)).toHaveLength(11);
+    expect(Array.isArray(result.contrastIssues)).toBe(true);
+  });
+
+  it("default curves produce no contrast issues", () => {
+    const result = analyze("#3b82f6");
+    expect(result.contrastIssues).toEqual([]);
   });
 });
 
