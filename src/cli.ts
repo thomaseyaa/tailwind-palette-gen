@@ -34,6 +34,7 @@ if (args.length < 1 || args.includes("--help") || args.includes("-h")) {
     --out <path>      Write formatted output to a file
     --config          Alias for --format tailwind
     --check-contrast  Warn (to stderr) about shade pairs that look too close
+    --strict          Exit with non-zero status when contrast issues are found
     --version, -v     Print version
     --help, -h        Show this help
 
@@ -74,11 +75,11 @@ if (formatFlag) {
   format = "pretty";
 }
 
-function maybeWarnOnContrast(hex: string): void {
-  if (!args.includes("--check-contrast")) return;
+function maybeWarnOnContrast(hex: string): number {
+  if (!args.includes("--check-contrast")) return 0;
   const oklch = generatePaletteOklch(hex);
   const issues = findContrastIssues(oklch);
-  if (issues.length === 0) return;
+  if (issues.length === 0) return 0;
   console.error("  Contrast warnings:");
   for (const issue of issues) {
     const delta = issue.delta.toFixed(3);
@@ -86,11 +87,12 @@ function maybeWarnOnContrast(hex: string): void {
       `    ${issue.from} -> ${issue.to}: OKLCH-L delta ${delta} (threshold ${issue.threshold})`,
     );
   }
+  return issues.length;
 }
 
 try {
   const palette = generatePalette(hex);
-  maybeWarnOnContrast(hex);
+  const contrastIssueCount = maybeWarnOnContrast(hex);
 
   if (format === "pretty") {
     const showOklch = args.includes("--show-oklch");
@@ -118,6 +120,10 @@ try {
     } else {
       console.log(out);
     }
+  }
+
+  if (contrastIssueCount > 0 && args.includes("--strict")) {
+    process.exit(2);
   }
 } catch (err: unknown) {
   const msg = err instanceof Error ? err.message : String(err);
