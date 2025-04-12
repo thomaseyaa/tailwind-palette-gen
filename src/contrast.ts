@@ -23,12 +23,19 @@ export function lightnessDelta(a: OklchColor, b: OklchColor): number {
 export const ADJACENT_PAIR_MIN_DELTA = 0.035;
 
 export interface ContrastIssue {
-  kind: "adjacent-too-close";
+  kind: "adjacent-too-close" | "spread-too-low";
   from: string;
   to: string;
   delta: number;
   threshold: number;
 }
+
+/**
+ * Minimum acceptable OKLCH-L spread between the lightest and darkest
+ * usable shades (50 and 950). A palette that fails this is essentially
+ * a monochromatic family and not very useful as a UI scale.
+ */
+export const PALETTE_SPREAD_MIN = 0.6;
 
 import type { OklchPalette } from "./index";
 
@@ -56,6 +63,19 @@ export function findContrastIssues(
         threshold,
       });
     }
+  }
+  // Spread check: lightest vs darkest shade.
+  const first = shades[0];
+  const last = shades[shades.length - 1];
+  const spread = lightnessDelta(palette[first], palette[last]);
+  if (spread < PALETTE_SPREAD_MIN) {
+    issues.push({
+      kind: "spread-too-low",
+      from: first,
+      to: last,
+      delta: spread,
+      threshold: PALETTE_SPREAD_MIN,
+    });
   }
   return issues;
 }
