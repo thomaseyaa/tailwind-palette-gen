@@ -31,4 +31,17 @@ describe("findContrastIssues", () => {
     // With such a high threshold every adjacent pair fails.
     expect(issues.length).toBeGreaterThan(5);
   });
+
+  it("flags palettes whose lightest <-> darkest spread is too low", () => {
+    const palette = generatePaletteOklch("#3b82f6");
+    // Squash everything into the middle of the lightness range.
+    for (const shade of Object.keys(palette)) {
+      palette[shade] = { ...palette[shade], l: 0.5 };
+    }
+    const issues = findContrastIssues(palette);
+    const spreadIssue = issues.find((i) => i.kind === "spread-too-low");
+    expect(spreadIssue).toBeDefined();
+    expect(spreadIssue?.from).toBe("50");
+    expect(spreadIssue?.to).toBe("950");
+  });
 });
