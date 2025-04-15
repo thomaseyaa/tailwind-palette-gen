@@ -58,6 +58,28 @@ const config = formatAsTailwindConfig(palette, "brand");
 // module.exports = { theme: { extend: { colors: { brand: { ... } } } } }
 ```
 
+### `analyze(hex)`
+
+Returns the palette, the OKLCH coordinates, and any contrast issues
+detected — useful for CI scripts that want to fail when a base color
+produces a "flat" palette:
+
+```ts
+import { analyze } from "tailwind-palette-gen";
+
+const { palette, oklch, contrastIssues } = analyze("#3b82f6");
+if (contrastIssues.length > 0) {
+  console.error("palette has issues:", contrastIssues);
+  process.exit(1);
+}
+```
+
+Or from the CLI:
+
+```bash
+tailwind-palette-gen "#3b82f6" --check-contrast --strict
+```
+
 ## Tailwind v4
 
 When you target Tailwind v4 (which itself moved to a CSS-first config in
