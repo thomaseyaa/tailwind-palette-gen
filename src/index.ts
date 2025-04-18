@@ -1,4 +1,7 @@
 import { findContrastIssues, type ContrastIssue } from "./contrast";
+
+export type { ContrastIssue } from "./contrast";
+export type { OklchColor } from "./oklch";
 import { CHROMA_MULTIPLIERS, LIGHTNESS_STOPS, SHADES } from "./curves";
 import { tailwindFormatter } from "./formatters/tailwind";
 import { hexToOklch, isAchromatic, OklchColor, oklchToHex } from "./oklch";
