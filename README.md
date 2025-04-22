@@ -80,6 +80,14 @@ Or from the CLI:
 tailwind-palette-gen "#3b82f6" --check-contrast --strict
 ```
 
+Exit codes:
+
+| Code | Meaning |
+|---|---|
+| 0 | Success |
+| 1 | Invalid input (bad hex, unknown format, etc.) |
+| 2 | `--strict` was set and contrast issues were found |
+
 ## Tailwind v4
 
 When you target Tailwind v4 (which itself moved to a CSS-first config in
