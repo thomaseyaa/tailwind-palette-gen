@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { analyze } from "./lib";
+import { analyze, format, OUTPUT_FORMATS, type OutputFormat } from "./lib";
 
 export function App() {
   const [hex, setHex] = useState("#3b82f6");
   const [name, setName] = useState("brand");
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>("tailwind-v4");
 
   const result = useMemo(() => {
     try {
@@ -13,6 +14,14 @@ export function App() {
       return { ok: false as const, error: msg };
     }
   }, [hex]);
+
+  const formatted = useMemo(() => {
+    if (!result.ok) return "";
+    return format(
+      { name, palette: result.palette, oklch: result.oklch },
+      outputFormat,
+    );
+  }, [result, name, outputFormat]);
 
   return (
     <main className="container">
@@ -49,14 +58,31 @@ export function App() {
       </section>
 
       {result.ok ? (
-        <section className="swatches">
-          {Object.entries(result.palette).map(([shade, color]) => (
-            <div key={shade} className="swatch" style={{ background: color }}>
-              <span className="shade">{shade}</span>
-              <span className="hex">{color}</span>
-            </div>
-          ))}
-        </section>
+        <>
+          <section className="swatches">
+            {Object.entries(result.palette).map(([shade, color]) => (
+              <div key={shade} className="swatch" style={{ background: color }}>
+                <span className="shade">{shade}</span>
+                <span className="hex">{color}</span>
+              </div>
+            ))}
+          </section>
+
+          <section className="output">
+            <label>
+              Format
+              <select
+                value={outputFormat}
+                onChange={(e) => setOutputFormat(e.target.value as OutputFormat)}
+              >
+                {OUTPUT_FORMATS.map((f) => (
+                  <option key={f} value={f}>{f}</option>
+                ))}
+              </select>
+            </label>
+            <textarea readOnly value={formatted} rows={14} spellCheck={false} />
+          </section>
+        </>
       ) : (
         <section className="error">{result.error}</section>
       )}
