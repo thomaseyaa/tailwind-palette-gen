@@ -68,6 +68,20 @@ export function App() {
             ))}
           </section>
 
+          {result.contrastIssues.length > 0 && (
+            <section className="warnings">
+              <h2>Contrast warnings</h2>
+              <ul>
+                {result.contrastIssues.map((issue, i) => (
+                  <li key={i}>
+                    <code>{issue.from}</code> → <code>{issue.to}</code>:
+                    {" "}OKLCH-L delta {issue.delta.toFixed(3)} (threshold {issue.threshold})
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <section className="output">
             <label>
               Format
