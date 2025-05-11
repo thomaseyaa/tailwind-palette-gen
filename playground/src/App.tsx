@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { analyze, format, OUTPUT_FORMATS, type OutputFormat } from "./lib";
 
 export function App() {
@@ -22,6 +22,17 @@ export function App() {
       outputFormat,
     );
   }, [result, name, outputFormat]);
+
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    if (!formatted) return;
+    void navigator.clipboard?.writeText(formatted);
+    setCopied(true);
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+    copyTimer.current = setTimeout(() => setCopied(false), 1500);
+  }
 
   return (
     <main className="container">
@@ -83,17 +94,22 @@ export function App() {
           )}
 
           <section className="output">
-            <label>
-              Format
-              <select
-                value={outputFormat}
-                onChange={(e) => setOutputFormat(e.target.value as OutputFormat)}
-              >
-                {OUTPUT_FORMATS.map((f) => (
-                  <option key={f} value={f}>{f}</option>
-                ))}
-              </select>
-            </label>
+            <div className="output-header">
+              <label>
+                Format
+                <select
+                  value={outputFormat}
+                  onChange={(e) => setOutputFormat(e.target.value as OutputFormat)}
+                >
+                  {OUTPUT_FORMATS.map((f) => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </select>
+              </label>
+              <button type="button" onClick={handleCopy} className="copy">
+                {copied ? "Copied" : "Copy"}
+              </button>
+            </div>
             <textarea readOnly value={formatted} rows={14} spellCheck={false} />
           </section>
         </>

@@ -144,6 +144,26 @@ header p {
   font: inherit;
 }
 
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.copy {
+  padding: 6px 12px;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  background: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.copy:hover {
+  background: #f4f4f5;
+}
+
 .output textarea {
   width: 100%;
   padding: 12px;
