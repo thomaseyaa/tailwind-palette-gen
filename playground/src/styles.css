@@ -48,6 +48,11 @@ header p {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
 }
 
+.controls input[type="text"][data-invalid] {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
 .controls input[type="color"] {
   width: 40px;
   height: 32px;

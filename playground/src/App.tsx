@@ -51,10 +51,12 @@ export function App() {
             type="text"
             value={hex}
             onChange={(e) => setHex(e.target.value)}
+            data-invalid={!result.ok || undefined}
+            spellCheck={false}
           />
           <input
             type="color"
-            value={hex}
+            value={result.ok ? hex : "#3b82f6"}
             onChange={(e) => setHex(e.target.value)}
           />
         </label>
@@ -64,6 +66,7 @@ export function App() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            spellCheck={false}
           />
         </label>
       </section>
