@@ -3,6 +3,10 @@
 Generate a full Tailwind CSS color palette (50-950) from a single base color,
 using OKLCH for perceptual uniformity.
 
+There is also a small web playground in [`playground/`](./playground/) — a
+Vite + React app that lets you tweak a base color and inspect the generated
+swatches in real time.
+
 ## Usage
 
 ```bash
