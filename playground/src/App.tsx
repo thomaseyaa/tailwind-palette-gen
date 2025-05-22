@@ -74,12 +74,23 @@ export function App() {
       {result.ok ? (
         <>
           <section className="swatches">
-            {Object.entries(result.palette).map(([shade, color]) => (
-              <div key={shade} className="swatch" style={{ background: color }}>
-                <span className="shade">{shade}</span>
-                <span className="hex">{color}</span>
-              </div>
-            ))}
+            {Object.entries(result.palette).map(([shade, color]) => {
+              const o = result.oklch[shade];
+              // Light backgrounds need dark text and vice versa. The OKLCH
+              // L coordinate is already in our hands so we use it directly
+              // instead of recomputing a luminance from the hex.
+              const textColor = o.l > 0.55 ? "#18181b" : "#fafafa";
+              return (
+                <div
+                  key={shade}
+                  className="swatch"
+                  style={{ background: color, color: textColor, textShadow: "none" }}
+                >
+                  <span className="shade">{shade}</span>
+                  <span className="hex">{color}</span>
+                </div>
+              );
+            })}
           </section>
 
           {result.contrastIssues.length > 0 && (
