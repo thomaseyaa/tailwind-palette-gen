@@ -1,10 +1,33 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { analyze, format, OUTPUT_FORMATS, type OutputFormat } from "./lib";
 
+function readHashState(): { hex?: string; name?: string } {
+  if (typeof window === "undefined") return {};
+  const raw = window.location.hash.replace(/^#/, "");
+  if (!raw) return {};
+  const params = new URLSearchParams(raw);
+  return {
+    hex: params.get("hex") ?? undefined,
+    name: params.get("name") ?? undefined,
+  };
+}
+
 export function App() {
-  const [hex, setHex] = useState("#3b82f6");
-  const [name, setName] = useState("brand");
+  const initial = readHashState();
+  const [hex, setHex] = useState(initial.hex ?? "#3b82f6");
+  const [name, setName] = useState(initial.name ?? "brand");
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("tailwind-v4");
+
+  // Reflect (hex, name) into the URL hash so palettes are shareable.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("hex", hex);
+    params.set("name", name);
+    const next = `#${params.toString()}`;
+    if (window.location.hash !== next) {
+      window.history.replaceState(null, "", next);
+    }
+  }, [hex, name]);
 
   const result = useMemo(() => {
     try {
