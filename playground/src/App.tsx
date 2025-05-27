@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { analyze, format, OUTPUT_FORMATS, type OutputFormat } from "./lib";
 
+const HEX_REGEX = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+const NAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{0,31}$/;
+
 function readHashState(): { hex?: string; name?: string } {
   if (typeof window === "undefined") return {};
   const raw = window.location.hash.replace(/^#/, "");
   if (!raw) return {};
   const params = new URLSearchParams(raw);
+  const rawHex = params.get("hex") ?? undefined;
+  const rawName = params.get("name") ?? undefined;
   return {
-    hex: params.get("hex") ?? undefined,
-    name: params.get("name") ?? undefined,
+    hex: rawHex && HEX_REGEX.test(rawHex) ? rawHex : undefined,
+    name: rawName && NAME_REGEX.test(rawName) ? rawName : undefined,
   };
 }
 
