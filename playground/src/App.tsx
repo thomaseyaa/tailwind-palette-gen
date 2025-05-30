@@ -23,15 +23,21 @@ export function App() {
   const [name, setName] = useState(initial.name ?? "brand");
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("tailwind-v4");
 
-  // Reflect (hex, name) into the URL hash so palettes are shareable.
+  // Reflect (hex, name) into the URL hash so palettes are shareable. We
+  // debounce the write because dragging the native color picker fires
+  // dozens of change events per second and replaceState() under that load
+  // makes the browser stutter.
   useEffect(() => {
-    const params = new URLSearchParams();
-    params.set("hex", hex);
-    params.set("name", name);
-    const next = `#${params.toString()}`;
-    if (window.location.hash !== next) {
-      window.history.replaceState(null, "", next);
-    }
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams();
+      params.set("hex", hex);
+      params.set("name", name);
+      const next = `#${params.toString()}`;
+      if (window.location.hash !== next) {
+        window.history.replaceState(null, "", next);
+      }
+    }, 150);
+    return () => clearTimeout(timer);
   }, [hex, name]);
 
   const result = useMemo(() => {
