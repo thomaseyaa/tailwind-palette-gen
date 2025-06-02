@@ -1,10 +1,10 @@
 import { findContrastIssues, type ContrastIssue } from "./contrast";
+import { CHROMA_MULTIPLIERS, LIGHTNESS_STOPS, SHADES } from "./curves";
+import { tailwindFormatter } from "./formatters/tailwind";
+import { hexToOklch, isAchromatic, type OklchColor, oklchToHex } from "./oklch";
 
 export type { ContrastIssue } from "./contrast";
 export type { OklchColor } from "./oklch";
-import { CHROMA_MULTIPLIERS, LIGHTNESS_STOPS, SHADES } from "./curves";
-import { tailwindFormatter } from "./formatters/tailwind";
-import { hexToOklch, isAchromatic, OklchColor, oklchToHex } from "./oklch";
 
 export interface Palette {
   [shade: string]: string;
