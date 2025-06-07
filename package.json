@@ -19,6 +19,16 @@
   ],
   "author": "Thomas Eyaa",
   "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomaseyaa/tailwind-palette-gen.git"
+  },
   "devDependencies": {
     "@types/culori": "2.1.1",
     "@types/jest": "29.5.14",
