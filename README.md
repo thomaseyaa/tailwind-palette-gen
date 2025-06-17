@@ -3,6 +3,16 @@
 Generate a full Tailwind CSS color palette (50-950) from a single base color,
 using OKLCH for perceptual uniformity.
 
+- One base color in, eleven shades out (`50`, `100`, … `950`).
+- OKLCH-driven lightness curve calibrated against Tailwind v4 — no more
+  uneven jumps between shades.
+- Outputs Tailwind v3 / Tailwind v4 / plain CSS custom properties / DTCG
+  JSON tokens — pick the one that fits your codebase.
+- Detects "flat" palettes (adjacent shades too close, total spread too
+  small) so you can fail CI on bad base colors.
+- Zero runtime dependencies in your app — the library only depends on
+  [`culori`](https://github.com/Evercoder/culori) for color conversion.
+
 There is also a small web playground in [`playground/`](./playground/) — a
 Vite + React app that lets you tweak a base color and inspect the generated
 swatches in real time.
