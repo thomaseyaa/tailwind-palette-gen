@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (upcoming)
+## 1.0.0 (June 2025)
 
 - Stabilise the public API. No breaking changes vs 0.4.0; promoting to 1.0
   to signal that the OKLCH-based generator and the four output formats
