@@ -58,6 +58,13 @@ function pickFlag(name: string): string | undefined {
 }
 
 const name = pickFlag("--name") ?? "primary";
+if (!/^[a-zA-Z][a-zA-Z0-9-_]{0,63}$/.test(name)) {
+  console.error(
+    `  Error: invalid --name "${name}" (must start with a letter, ` +
+      `letters/digits/-/_ only, <= 64 chars)`,
+  );
+  process.exit(1);
+}
 
 let format: OutputFormat | "pretty";
 const formatFlag = pickFlag("--format");
