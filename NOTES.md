@@ -13,16 +13,26 @@ Done in commits between 2025-02-04 and 2025-02-25:
 - New `generatePaletteOklch(hex)` returns raw OKLCH coordinates for code
   that wants to emit `oklch()` CSS or design tokens.
 
-## Next — multi-format output (Mar 2025)
+## Multi-format output (Mar 2025) — done
 
-The current CLI only outputs a flat list or a Tailwind v3 config object.
-Targets for next month:
+Shipped in 0.3.0. `--format tailwind | tailwind-v4 | css | dtcg`, with
+`--out <path>` to dump to a file.
 
-1. CSS custom properties block (`--brand-500: oklch(...)`) — keeps OKLCH
-   in the output, falls back to hex via a second declaration.
-2. DTCG JSON token file — each shade as `{ "$value": "...", "$type":
-   "color" }`. The spec is finally stable enough.
-3. Tailwind v4 `@theme` block — Tailwind v4 (Jan 2025) ships its CSS-first
-   config; we should emit something that works there too.
+## Contrast detection (Apr 2025) — done
 
-CLI surface: `--format tailwind|css|dtcg|tailwind-v4`, default `tailwind`.
+Shipped in 0.4.0. `findContrastIssues()` + `--check-contrast` + `--strict`.
+
+## Playground (May 2025) — done
+
+Vite 6 + React 19 + plain CSS in `playground/`. Deployed via Vercel.
+
+## 1.0.0 (June 2025) — done
+
+Public API stable. See CHANGELOG.md for the full release notes.
+
+## Ideas for later
+
+- WCAG / APCA delta on top of the OKLCH-L delta (would let us flag bad
+  fg/bg combinations inside the palette itself).
+- Custom curves via `--curve <preset>` (e.g. "softer", "punchier").
+- Palette diff command: take two base colors, show shade-by-shade delta.
