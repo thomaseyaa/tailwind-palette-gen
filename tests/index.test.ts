@@ -97,6 +97,12 @@ describe("analyze", () => {
     const result = analyze("#3b82f6");
     expect(result.contrastIssues).toEqual([]);
   });
+
+  it("hex palette inside analyze() matches generatePalette()", () => {
+    const a = analyze("#22c55e");
+    const b = generatePalette("#22c55e");
+    expect(a.palette).toEqual(b);
+  });
 });
 
 describe("formatAsTailwindConfig", () => {
